@@ -1,0 +1,34 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+	"textures": {
+	  "up": 	"applied_physics:block/winch_up",
+	  "down": 	"applied_physics:block/winch_down",
+	  "north": 	"applied_physics:block/winch_north",
+	  "east": 	"applied_physics:block/winch_east",
+	  "south": 	"applied_physics:block/winch_south",
+	  "west": 	"applied_physics:block/winch_west"
+	},
+	"model": "cube"
+  },
+  "variants": {
+	"normal": [{}],
+	"inventory": [{}],
+	"facing": {
+	  "up": 	{"x": 270, "y": 180},
+	  "down": 	{"x": 90},
+	  "north": 	{"y": 0},
+	  "east": 	{"y": 90},
+	  "south": 	{"y": 180},
+	  "west": 	{"y": 270}
+	},
+	"total_rope_length": {
+	  "n1": {},
+	  "n2": {},
+	  "n3": {},
+	  "n4": {},
+	  "n5": {},
+	  "n6": {}
+	}
+  }
+}
