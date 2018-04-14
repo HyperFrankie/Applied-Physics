@@ -1,22 +1,22 @@
 {
   "forge_marker": 1,
   "defaults": {
-	"model": "applied_physics:winch_normal"
+	"model": "applied_physics:tank_normal"
   },
   "variants": {
 	"normal": [{}],
 	"inventory": [{}],
 	"facing": {
-	  "north": 	{"y": 270},
-	  "east": 	{"y": 0},
-	  "south": 	{"y": 90},
-	  "west": 	{"y": 180}
+	  "north": 	{"y": 0},
+	  "east": 	{"y": 90},
+	  "south": 	{"y": 180},
+	  "west": 	{"y": 270}
 	},
 	"connections": {
 	  "0": {},
-	  "1": {"model": "applied_physics:winch_connected_front"},
-	  "2": {"model": "applied_physics:winch_connected_back"},
-	  "3": {"model": "applied_physics:winch_connected_both"}
+	  "1": {"model": "applied_physics:tank_connected_front"},
+	  "2": {"model": "applied_physics:tank_connected_back"},
+	  "3": {"model": "applied_physics:tank_connected_both"}
 	}
   }
 }

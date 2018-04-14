@@ -1,11 +1,14 @@
 package com.AppliedPhysics.proxy;
 
 import com.AppliedPhysics.AppliedPhysics;
+import com.AppliedPhysics.block.TileEntityBlocks.SpecialRenderers.TEFRTankFluid;
+import com.AppliedPhysics.block.TileEntityBlocks.TileEntities.TileEntityTank;
 import com.AppliedPhysics.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -26,7 +29,7 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void registerRenderers() {
-//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMiniBlock.class, new TESRMiniBlock());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new TEFRTankFluid());
 	}
 
 }

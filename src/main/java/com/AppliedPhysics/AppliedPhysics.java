@@ -47,6 +47,8 @@ public class AppliedPhysics {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new ModGuiHandler());
         network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
+	    proxy.registerRenderers();
+
         logger = event.getModLog();
     }
 
