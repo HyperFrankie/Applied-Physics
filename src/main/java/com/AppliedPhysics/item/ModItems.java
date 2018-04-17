@@ -1,6 +1,11 @@
 package com.AppliedPhysics.item;
 
+import com.AppliedPhysics.ModFluids;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModItems {
@@ -22,15 +27,19 @@ public class ModItems {
 //	public static ItemChiselBase 	chisel_obsidian = 			new ItemChiselBase(	Main.chiselObsidian,		"obsidian_chisel");
 //	public static SaveModelBase		save_model = 				new SaveModelBase(	Main.shadowToolMaterial, 	"save_model");
 //	public static Bit				bit = 						new Bit("Bit");
+	public static final ItemFluidContainerBase SIMPLE_TANK = new ItemFluidContainerBase("simple_tank", 10000, ModFluids.STEAM, FluidRegistry.WATER, FluidRegistry.LAVA);
 
 	public static void register(IForgeRegistry<Item> registry) {
 		registry.registerAll(
-//				shadow_ingot,
+				SIMPLE_TANK
 				);
 	}
 
 	public static void registerModels() {
-//		shadow_ingot.registerItemModel();
+		SIMPLE_TANK.registerItemModel();
+		ModelLoaderRegistry.registerLoader(FluidTankModel.CustomModelLoader.INSTANCE);
+		ModelLoader.setCustomMeshDefinition(SIMPLE_TANK, stack -> FluidTankModel.LOCATION);
+		ModelBakery.registerItemVariants(SIMPLE_TANK, FluidTankModel.LOCATION);
 	}
 
 }

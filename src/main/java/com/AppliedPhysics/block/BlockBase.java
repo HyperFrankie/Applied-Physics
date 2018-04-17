@@ -18,7 +18,7 @@ public class BlockBase extends Block {
 		this.name = name;
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(AppliedPhysics.physicsTab);
+		setCreativeTab(AppliedPhysics.PHYSICS_TAB);
 	}
 
 	public void registerItemModel(Item itemBlock) {

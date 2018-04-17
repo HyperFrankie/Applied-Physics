@@ -12,7 +12,7 @@ public class ItemBase extends Item {
 		this.name = name;
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(AppliedPhysics.physicsTab);
+		setCreativeTab(AppliedPhysics.PHYSICS_TAB);
 	}
 
 	public void registerItemModel() {

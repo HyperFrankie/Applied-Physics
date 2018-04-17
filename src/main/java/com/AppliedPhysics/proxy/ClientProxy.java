@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy {
@@ -30,6 +32,10 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new TEFRTankFluid());
+	}
+
+	public void registerFluid(Fluid fluid) {
+		FluidRegistry.registerFluid(fluid);
 	}
 
 }

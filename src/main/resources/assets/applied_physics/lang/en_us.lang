@@ -5,6 +5,9 @@
 tile.basic_block.name=Basic Block
 tile.winch.name=Winch
 
+# Fluids
+fluid.steam=Steam
+
 # Armor
 
 

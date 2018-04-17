@@ -13,15 +13,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.items.ItemHandlerHelper;
 import scala.actors.threadpool.Arrays;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Tank extends BlockTileEntity<TileEntityTank> {
 
@@ -38,60 +43,90 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!worldIn.isRemote) {
-			System.out.println("block activated");
-			Block block = state.getBlock();
 			ItemStack stack = playerIn.getHeldItemMainhand();
-			System.out.println(stack.toString());
+			System.out.println(stack);
 			if(stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, facing)) {
 				System.out.println("has fluid handler item capability");
-				FluidTank tank = ((TileEntityTank) worldIn.getTileEntity(pos)).tank;
-				IFluidHandlerItem c = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, facing);
-				if(FluidUtil.getFluidContained(playerIn.getHeldItemMainhand()) != null) {
-					if(!(FluidUtil.getFluidContained(stack).amount > tank.getCapacity() - tank.getFluidAmount())) {
-						FluidActionResult r = FluidUtil.tryEmptyContainer(stack, tank, tank.getCapacity() - tank.getFluidAmount(), playerIn, true);
-						if(r.isSuccess()) {
-							playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
-							System.out.println("r.getResult(): " + r.getResult());
-							System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
-							System.out.println("tank level: " + tank.getFluidAmount());
-							((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
-//						System.out.println("fluid in item after tryEmpty: " + FluidUtil.getFluidContained(playerIn.getHeldItemMainhand()).amount);
-						} else {
-							System.out.println("no success");
+				FluidTank tank = ((FluidTank) ((TileEntityTank) worldIn.getTileEntity(pos)).getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing));
+				if(tank != null) {
+					IFluidHandlerItem c = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, facing);
+					if(FluidUtil.getFluidContained(stack) != null) {
+						System.out.println("fluid in item != null");
+						if(FluidUtil.getFluidContained(stack).amount <= tank.getCapacity() - tank.getFluidAmount() || !(stack.getItem() instanceof UniversalBucket)) {
+							System.out.println("item fluid amount < than the empty space in the tank || the !(ItemStack.getItem() instanceof UniversalBucket)");
+							FluidActionResult r = FluidUtil.tryEmptyContainer(stack, tank, tank.getCapacity() - tank.getFluidAmount(), playerIn, true);
+							if(r.isSuccess()) {
+//								playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+								System.out.println("r.getResult(): " + r.getResult());
+								System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
+								System.out.println("tank level: " + tank.getFluidAmount());
+								((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
+								worldIn.getTileEntity(pos).markDirty();
+							} else {
+								System.out.println("no success");
+							}
+							return true;
+						} else if(FluidUtil.getFluidContained(stack).amount == 0 && (tank.getFluidAmount() >= 1000 || !(stack.getItem() instanceof UniversalBucket))) {
+							System.out.println("item fluid amount == 0 && either the fluid in the tank is >= 1000 || !(ItemStack.getItem() instanceof UniversalBucket)");
+							FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getFluidAmount(), playerIn,true);
+							if(r.isSuccess()) {
+//								playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+								System.out.println("r.getResult(): " + r.getResult());
+								System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
+								System.out.println("tank level: " + tank.getFluidAmount());
+								((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
+								worldIn.getTileEntity(pos).markDirty();
+							} else {
+								System.out.println("no success");
+							}
+							return true;
 						}
-						return true;
-					} else if(FluidUtil.getFluidContained(stack).amount == 0) {
-						FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getCapacity() - tank.getFluidAmount(), playerIn,true);
-						if(r.isSuccess()) {
-							playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
-							System.out.println("r.getResult(): " + r.getResult());
-							System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
-							System.out.println("tank level: " + tank.getFluidAmount());
-							((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
-//						System.out.println("fluid in item after tryFill: " + FluidUtil.getFluidContained(playerIn.getHeldItemMainhand()).amount);
-						} else {
-							System.out.println("no success");
-						}
-						return true;
 					}
-				}
-				System.out.println("fluid contained is null or can't fill tank any further");
-				FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getCapacity() - tank.getFluidAmount(), playerIn,true);
-				if(r.isSuccess()) {
-					playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
-					System.out.println("r.getResult(): " + r.getResult());
-					System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
-					System.out.println("tank level: " + tank.getFluidAmount());
-					((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
-//				System.out.println("fluid in item after tryFill: " + FluidUtil.getFluidContained(playerIn.getHeldItemMainhand()).amount);
-				} else {
-					System.out.println("no success");
+					System.out.println("fluid in item == null || can't fill tank any further");
+					FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getFluidAmount(), playerIn,true);
+//				    FluidStack s = FluidUtil.tryFluidTransfer(FluidUtil.getFluidHandler(stack), tank, tank.getFluidAmount(), true);
+					if(r.isSuccess()) {
+//						playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+						System.out.println("r.getResult(): " + r.getResult());
+						System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
+						System.out.println("tank level: " + tank.getFluidAmount());
+						((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
+						worldIn.getTileEntity(pos).markDirty();
+					} else {
+						System.out.println("no success");
+					}
 				}
 				return true;
 			}
-			return false;
+			return true;
 		}
 		return true;
+	}
+
+	@Nonnull
+	public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill) {
+		ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
+		IFluidHandlerItem containerFluidHandler = FluidUtil.getFluidHandler(containerCopy);
+		if (containerFluidHandler != null) {
+			FluidStack simulatedTransfer = FluidUtil.tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, false);
+			System.out.println(simulatedTransfer);
+			if (simulatedTransfer != null) {
+				if (doFill) {
+					FluidUtil.tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, true);
+					if (player != null) {
+						SoundEvent soundevent = simulatedTransfer.getFluid().getFillSound(simulatedTransfer);
+						player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+					}
+				}
+				else {
+					containerFluidHandler.fill(simulatedTransfer, true);
+				}
+
+				ItemStack resultContainer = containerFluidHandler.getContainer();
+				return new FluidActionResult(resultContainer);
+			}
+		}
+		return FluidActionResult.FAILURE;
 	}
 
 	@Override

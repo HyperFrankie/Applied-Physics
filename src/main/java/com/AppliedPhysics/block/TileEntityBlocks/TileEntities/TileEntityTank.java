@@ -87,12 +87,12 @@ public class TileEntityTank extends TileEntity {
 							(facing == EnumFacing.SOUTH && connections == 1) ||
 							(facing == EnumFacing.NORTH && connections == 2) ||
 							connections == 3)
-					? 0.0625 : 0);
+					? 0.0625 : 0.0);
 			maxZ = 0.9375 + ((
 							(facing == EnumFacing.SOUTH && connections == 2) ||
 							(facing == EnumFacing.NORTH && connections == 1) ||
 							connections == 3)
-					? 0.0625 : 0);
+					? 0.0625 : 0.0);
 		} else {
 			minZ = 0.5 - (content_width / 2);
 			maxZ = 1.0 - minZ;
@@ -100,22 +100,18 @@ public class TileEntityTank extends TileEntity {
 							(facing == EnumFacing.WEST && connections == 1) ||
 							(facing == EnumFacing.EAST && connections == 2) ||
 							connections == 3)
-					? 0.0625 : 0);
+					? 0.0625 : 0.0);
 			maxX = 0.9375 + ((
 							(facing == EnumFacing.WEST && connections == 2) ||
 							(facing == EnumFacing.EAST && connections == 1) ||
 							connections == 3)
-					? 0.0625 : 0);
+					? 0.0625 : 0.0);
 		}
-		TextureAtlasSprite still = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(tank.getFluid().getFluid().getStill().toString());
-		minU = still.getInterpolatedU(16 * minX);
-		minV = still.getInterpolatedU(16 * minZ);
-		maxU = still.getInterpolatedU(16 * maxX);
-		maxV = still.getInterpolatedU(16 * maxZ);
-//		minU = still.getMinU();
-//		minV = still.getMinV();
-//		maxU = still.getMaxU();
-//		maxV = still.getMaxV();
+		TextureAtlasSprite still = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(((FluidTank) this.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.DOWN)).getFluid().getFluid().getStill().toString());
+		minU = still.getInterpolatedU(16.0 * minX);
+		minV = still.getInterpolatedV(16.0 * minZ);
+		maxU = still.getInterpolatedU(16.0 * maxX);
+		maxV = still.getInterpolatedV(16.0 * maxZ);
 		shouldRender = true;
 	}
 
@@ -126,6 +122,7 @@ public class TileEntityTank extends TileEntity {
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		System.out.println("                    ----------------writing to NBT----------------");
 		compound.setDouble("content", content_height);
 		tank.writeToNBT(compound);
 		return super.writeToNBT(compound);
@@ -134,7 +131,6 @@ public class TileEntityTank extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		this.content_height = compound.getDouble("content");
-//		FluidStack.loadFluidStackFromNBT(compound.getTag("fluid"));
 		tank.readFromNBT(compound);
 		super.readFromNBT(compound);
 	}
@@ -143,9 +139,8 @@ public class TileEntityTank extends TileEntity {
 //	public boolean hasFastRenderer() { return false; }
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing)
-	{
-		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		return (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != EnumFacing.UP) || super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -153,7 +148,11 @@ public class TileEntityTank extends TileEntity {
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing)
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-			return (T) tank;
+			if(facing == EnumFacing.UP) {
+
+			} else {
+				return (T) tank;
+			}
 		return super.getCapability(capability, facing);
 	}
 }

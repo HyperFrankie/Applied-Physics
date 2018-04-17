@@ -6,10 +6,14 @@ import com.AppliedPhysics.gui.PhysicsTab;
 import com.AppliedPhysics.item.ModItems;
 import com.AppliedPhysics.proxy.CommonProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -36,9 +40,15 @@ public class AppliedPhysics {
 	@SidedProxy(serverSide = "com.AppliedPhysics.proxy.CommonProxy", clientSide = "com.AppliedPhysics.proxy.ClientProxy")
 	public static CommonProxy proxy;
 
-	public static final PhysicsTab physicsTab = new PhysicsTab();
+	public static final PhysicsTab PHYSICS_TAB = new PhysicsTab();
+
+	public static final Material STEAM = new MaterialLiquid(MapColor.SNOW);
 
 
+
+	static {
+		FluidRegistry.enableUniversalBucket();
+	}
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -74,9 +84,9 @@ public class AppliedPhysics {
 		}
 
 		@SubscribeEvent
-		public static void registerBlocks(RegistryEvent.Register<Block> event) {
+		public static void registerBlocksAndFluids(RegistryEvent.Register<Block> event) {
+			ModFluids.register();
 			ModBlocks.register(event.getRegistry());
 		}
 	}
-
 }

@@ -3,6 +3,7 @@ package com.AppliedPhysics.proxy;
 import com.AppliedPhysics.item.ItemBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fluids.Fluid;
 
 public class CommonProxy {
 
@@ -20,8 +21,8 @@ public class CommonProxy {
 		return I18n.translateToLocalFormatted(unlocalized, args);
 	}
 	
-	public void registerRenderers() {
-	
-	}
+	public void registerRenderers() {}
+
+	public void registerFluids(Fluid fluid) {}
 
 }
