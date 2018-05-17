@@ -1,0 +1,21 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+	"model": "applied_physics:rod_wood_r0"
+  },
+  "variants": {
+	"normal": [{}],
+	"inventory": [{}],
+	"facing": {
+	  "north": {},
+	  "east": {"y": 90},
+	  "up": {"x": 90}
+	},
+	"rotation": {
+	  "r0": {},
+	  "r1": {"model": "applied_physics:rod_wood_r1"},
+	  "r2": {"model": "applied_physics:rod_wood_r2"},
+	  "r3": {"model": "applied_physics:rod_wood_r3"}
+	}
+  }
+}

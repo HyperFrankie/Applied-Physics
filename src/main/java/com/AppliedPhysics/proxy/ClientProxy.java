@@ -1,8 +1,12 @@
 package com.AppliedPhysics.proxy;
 
 import com.AppliedPhysics.AppliedPhysics;
+import com.AppliedPhysics.block.TileEntityBlocks.SpecialRenderers.TEFRRod;
 import com.AppliedPhysics.block.TileEntityBlocks.SpecialRenderers.TEFRTankFluid;
+import com.AppliedPhysics.block.TileEntityBlocks.SpecialRenderers.TEFRWinch;
+import com.AppliedPhysics.block.TileEntityBlocks.TileEntities.TileEntityRod;
 import com.AppliedPhysics.block.TileEntityBlocks.TileEntities.TileEntityTank;
+import com.AppliedPhysics.block.TileEntityBlocks.TileEntities.TileEntityWinch;
 import com.AppliedPhysics.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -32,6 +36,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new TEFRTankFluid());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRod.class, new TEFRRod());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityWinch.class, new TEFRWinch());
 	}
 
 	public void registerFluid(Fluid fluid) {

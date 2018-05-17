@@ -25,7 +25,7 @@ public class config {
 		@Config.RequiresMcRestart
 		public int poweredEnergyCapacity = 100000;
 
-		@Config.Comment("How much energy powered tools will use per block destroyed (Hitting entities will use x2 this amount)")
+		@Config.Comment("How much energy powered tools will use per blocks destroyed (Hitting entities will use x2 this amount)")
 		@Config.RequiresMcRestart
 		public int poweredEnergyUsePerBlock = 100;
 

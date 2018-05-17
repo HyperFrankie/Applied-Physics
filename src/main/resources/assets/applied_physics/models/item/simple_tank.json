@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-	"layer0": "extra_blocks:item/simple_tank"
+	"layer0": "extra_blocks:items/simple_tank"
   }
 }

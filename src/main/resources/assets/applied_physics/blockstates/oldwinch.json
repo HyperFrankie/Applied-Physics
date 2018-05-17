@@ -2,12 +2,12 @@
   "forge_marker": 1,
   "defaults": {
 	"textures": {
-	  "up": 	"applied_physics:block/winch_up",
-	  "down": 	"applied_physics:block/winch_down",
-	  "north": 	"applied_physics:block/winch_north",
-	  "east": 	"applied_physics:block/winch_east",
-	  "south": 	"applied_physics:block/winch_south",
-	  "west": 	"applied_physics:block/winch_west"
+	  "up": 	"applied_physics:blocks/winch_up",
+	  "down": 	"applied_physics:blocks/winch_down",
+	  "north": 	"applied_physics:blocks/winch_north",
+	  "east": 	"applied_physics:blocks/winch_east",
+	  "south": 	"applied_physics:blocks/winch_south",
+	  "west": 	"applied_physics:blocks/winch_west"
 	},
 	"model": "cube"
   },

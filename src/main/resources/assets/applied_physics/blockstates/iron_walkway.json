@@ -1,0 +1,26 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+	"model": "applied_physics:iron_walkway_normal"
+  },
+  "variants": {
+	"normal": [{}],
+	"inventory": [{}],
+	"north": {
+	  "false": {},
+	  "true": {}
+	},
+	"east": {
+	  "false": {},
+	  "true": {}
+	},
+	"south": {
+	  "false": {},
+	  "true": {}
+	},
+	"west": {
+	  "false": {},
+	  "true": {}
+	}
+  }
+}

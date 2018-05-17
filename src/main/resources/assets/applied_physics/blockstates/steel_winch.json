@@ -1,0 +1,26 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+	"model": "applied_physics:winch_steel_normal"
+  },
+  "variants": {
+	"normal": [{}],
+	"inventory": [{}],
+	"facing": {
+	  "up": 	{"x": 270},
+	  "down": 	{"x": 90},
+	  "north": 	{"y": 270},
+	  "east": 	{"y": 0},
+	  "south": 	{"y": 90},
+	  "west": 	{"y": 180}
+	},
+	"total_rope_length": {
+	  "n1": {},
+	  "n2": {},
+	  "n3": {},
+	  "n4": {},
+	  "n5": {},
+	  "n6": {}
+	}
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+	"model": "applied_physics:pallet_normal"
+  },
+  "variants": {
+	"normal": [{}],
+	"inventory": [{}],
+	"facing": {
+	  "north": 	{"y": 0},
+	  "east": 	{"y": 90}
+	},
+	"connected": {
+	  "false": {},
+	  "true": {"model": "applied_physics:pallet_connected"}
+	}
+  }
+}

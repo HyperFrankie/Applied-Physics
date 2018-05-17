@@ -10,8 +10,8 @@ public class ModFluids {
 	private static Fluid createFluid(String fluidName, int density, int viscosity) {
 		return new Fluid(
 				fluidName,
-				new ResourceLocation(AppliedPhysics.MODID + ":" + fluidName + "_still"),
-				new ResourceLocation(AppliedPhysics.MODID + ":" + fluidName + "_flowing")
+				new ResourceLocation(AppliedPhysics.MODID, "blocks/" + fluidName + "_still"),
+				new ResourceLocation(AppliedPhysics.MODID, "blocks/" + fluidName + "_flow")
 		)
 					.setDensity(density)
 					.setViscosity(viscosity);

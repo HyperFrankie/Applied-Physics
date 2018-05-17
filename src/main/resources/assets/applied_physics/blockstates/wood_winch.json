@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-	"model": "applied_physics:winch_normal"
+	"model": "applied_physics:winch_wood_normal"
   },
   "variants": {
 	"normal": [{}],

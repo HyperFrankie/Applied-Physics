@@ -41,26 +41,29 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 	}
 
 	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		super.onBlockAdded(worldIn, pos, state);
+	}
+
+	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!worldIn.isRemote) {
-			ItemStack stack = playerIn.getHeldItemMainhand();
+			ItemStack stack = playerIn.getHeldItem(hand);
 			System.out.println(stack);
 			if(stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, facing)) {
 				System.out.println("has fluid handler item capability");
 				FluidTank tank = ((FluidTank) ((TileEntityTank) worldIn.getTileEntity(pos)).getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing));
 				if(tank != null) {
-					IFluidHandlerItem c = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, facing);
 					if(FluidUtil.getFluidContained(stack) != null) {
 						System.out.println("fluid in item != null");
 						if(FluidUtil.getFluidContained(stack).amount <= tank.getCapacity() - tank.getFluidAmount() || !(stack.getItem() instanceof UniversalBucket)) {
 							System.out.println("item fluid amount < than the empty space in the tank || the !(ItemStack.getItem() instanceof UniversalBucket)");
 							FluidActionResult r = FluidUtil.tryEmptyContainer(stack, tank, tank.getCapacity() - tank.getFluidAmount(), playerIn, true);
 							if(r.isSuccess()) {
-//								playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+								playerIn.setHeldItem(hand, r.getResult());
 								System.out.println("r.getResult(): " + r.getResult());
 								System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
 								System.out.println("tank level: " + tank.getFluidAmount());
-								((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
 								worldIn.getTileEntity(pos).markDirty();
 							} else {
 								System.out.println("no success");
@@ -70,11 +73,10 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 							System.out.println("item fluid amount == 0 && either the fluid in the tank is >= 1000 || !(ItemStack.getItem() instanceof UniversalBucket)");
 							FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getFluidAmount(), playerIn,true);
 							if(r.isSuccess()) {
-//								playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+								playerIn.setHeldItem(hand, r.getResult());
 								System.out.println("r.getResult(): " + r.getResult());
 								System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
 								System.out.println("tank level: " + tank.getFluidAmount());
-								((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
 								worldIn.getTileEntity(pos).markDirty();
 							} else {
 								System.out.println("no success");
@@ -86,11 +88,10 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 					FluidActionResult r = FluidUtil.tryFillContainer(stack, tank, tank.getFluidAmount(), playerIn,true);
 //				    FluidStack s = FluidUtil.tryFluidTransfer(FluidUtil.getFluidHandler(stack), tank, tank.getFluidAmount(), true);
 					if(r.isSuccess()) {
-//						playerIn.inventory.setInventorySlotContents(playerIn.inventory.getSlotFor(playerIn.getHeldItemMainhand()), r.getResult());
+						playerIn.setHeldItem(hand, r.getResult());
 						System.out.println("r.getResult(): " + r.getResult());
 						System.out.println("tank fluid: " + ((tank.getFluidAmount() != 0) ? tank.getFluid().getUnlocalizedName() : "empty"));
 						System.out.println("tank level: " + tank.getFluidAmount());
-						((TileEntityTank) worldIn.getTileEntity(pos)).updateFluidValue();
 						worldIn.getTileEntity(pos).markDirty();
 					} else {
 						System.out.println("no success");
@@ -131,87 +132,14 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		EnumFacing f = EnumFacing.fromAngle(placer.rotationYawHead);
-		System.out.println(f);
-		IBlockState target = world.getBlockState(pos);
-		IBlockState backFromTarget = world.getBlockState(pos.offset(f.getOpposite()));
-		System.out.println(backFromTarget);
-		IBlockState frontFromTarget = world.getBlockState(pos.offset(f));
-		System.out.println(frontFromTarget);
-		if(
-				backFromTarget.getBlock() instanceof Tank
-				&& frontFromTarget.getBlock() instanceof Tank
-				) {
-			System.out.println("both instanceof tank");
-			if(
-					Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))
-				&& Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))
-					) {
-				System.out.println("both aligned over the same axis");
-				return this.blockState.getBaseState()
-						.withProperty(FACING, f.getOpposite())
-						.withProperty(CONNECTIONS, 3);
-			}
-		}
-		System.out.println("not both instanceof tank");
-		if(backFromTarget.getBlock() instanceof Tank) {
-			System.out.println("backFromTarget instanceof tank");
-			if(Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))) {
-				System.out.println("aligned over the same axis");
-				return this.blockState.getBaseState()
-						.withProperty(FACING, f.getOpposite())
-						.withProperty(CONNECTIONS, 1);
-			}
-		}
-		if(frontFromTarget.getBlock() instanceof Tank) {
-			System.out.println("frontFromTarget instanceof tank");
-			if(Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))) {
-				System.out.println("aligned over the same axis");
-				return this.blockState.getBaseState()
-						.withProperty(FACING, f.getOpposite())
-						.withProperty(CONNECTIONS, 2);
-			}
-		}
-	return this.blockState.getBaseState().withProperty(FACING, f.getOpposite()).withProperty(CONNECTIONS, 0);
+		return getStateFromAngleOrFacing(world, placer, null, pos);
 	}
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-		EnumFacing f = state.getValue(FACING).getOpposite();
-		System.out.println(f);
-		IBlockState backFromTarget = worldIn.getBlockState(pos.offset(f.getOpposite()));
-		System.out.println(backFromTarget);
-		IBlockState frontFromTarget = worldIn.getBlockState(pos.offset(f));
-		System.out.println(frontFromTarget);
-		if(
-				backFromTarget.getBlock() instanceof Tank
-						&& frontFromTarget.getBlock() instanceof Tank
-				) {
-			if (
-					Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))
-							&& Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))
-					) {
-				if(state.getValue(CONNECTIONS) != 3) {
-					worldIn.setBlockState(pos, state.withProperty(CONNECTIONS, 3), 11);
-				}
-			}
-		} else if(backFromTarget.getBlock() instanceof Tank) {
-			if (Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))) {
-				if(state.getValue(CONNECTIONS) != 1) {
-					worldIn.setBlockState(pos, state.withProperty(CONNECTIONS, 1), 11);
-				}
-			}
-		} else if(frontFromTarget.getBlock() instanceof Tank) {
-			if (Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))) {
-				if(state.getValue(CONNECTIONS) != 2) {
-					worldIn.setBlockState(pos, state.withProperty(CONNECTIONS, 2), 11);
-				}
-			}
-		} else {
-			if(state.getValue(CONNECTIONS) != 0) {
-				worldIn.setBlockState(pos, state.withProperty(CONNECTIONS, 0), 11);
-			}
+		IBlockState stateAfterUpdate = getStateFromAngleOrFacing(worldIn, null, state.getValue(FACING).getOpposite(), pos);
+		if(stateAfterUpdate.getValue(CONNECTIONS) != state.getValue(CONNECTIONS)) {
+			worldIn.setBlockState(pos, state.withProperty(CONNECTIONS, stateAfterUpdate.getValue(CONNECTIONS)), 11);
 		}
 	}
 
@@ -235,8 +163,7 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 	public int getMetaFromState(IBlockState state) {
 		if (state.getPropertyKeys().isEmpty()) {
 			return 0;
-		}
-		else {
+		} else {
 			return ((state.getValue(Tank.FACING).getIndex() - 2) * CONNECTIONS.getAllowedValues().size()) + state.getValue(this.CONNECTIONS);
 		}
 	}
@@ -244,8 +171,8 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return super.getStateFromMeta(meta)
-				.withProperty(FACING, EnumFacing.getFront((meta - (meta % 4)) / CONNECTIONS.getAllowedValues().size() + 2))
-				.withProperty(CONNECTIONS, meta % 4);
+				.withProperty(FACING, EnumFacing.getFront((meta - (meta % CONNECTIONS.getAllowedValues().size())) / CONNECTIONS.getAllowedValues().size() + 2))
+				.withProperty(CONNECTIONS, meta % CONNECTIONS.getAllowedValues().size());
 	}
 
 	@Override
@@ -274,6 +201,48 @@ public class Tank extends BlockTileEntity<TileEntityTank> {
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
+	}
+
+	private IBlockState getStateFromAngleOrFacing(World world, @Nullable EntityLivingBase placer, @Nullable EnumFacing blockFacing, BlockPos pos) {
+		EnumFacing f;
+		if(placer != null) {
+			f = EnumFacing.fromAngle(placer.rotationYawHead);
+		} else {
+			f = blockFacing;
+		}
+		IBlockState target = world.getBlockState(pos);
+		IBlockState backFromTarget = world.getBlockState(pos.offset(f.getOpposite()));
+		IBlockState frontFromTarget = world.getBlockState(pos.offset(f));
+		if(backFromTarget.getBlock() instanceof Tank && frontFromTarget.getBlock() instanceof Tank) {
+			if(
+					Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))
+							&& Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))
+					) {
+				return this.blockState.getBaseState()
+						.withProperty(FACING, f.getOpposite())
+						.withProperty(CONNECTIONS, 3);
+			}
+		}
+//		System.out.println("not both instanceof tank");
+		if(backFromTarget.getBlock() instanceof Tank) {
+//			System.out.println("backFromTarget instanceof tank");
+			if(Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(backFromTarget.getValue(FACING))) {
+//				System.out.println("aligned over the same axis");
+				return this.blockState.getBaseState()
+						.withProperty(FACING, f.getOpposite())
+						.withProperty(CONNECTIONS, 1);
+			}
+		}
+		if(frontFromTarget.getBlock() instanceof Tank) {
+//			System.out.println("frontFromTarget instanceof tank");
+			if(Arrays.asList(new EnumFacing[]{f, f.getOpposite()}).contains(frontFromTarget.getValue(FACING))) {
+//				System.out.println("aligned over the same axis");
+				return this.blockState.getBaseState()
+						.withProperty(FACING, f.getOpposite())
+						.withProperty(CONNECTIONS, 2);
+			}
+		}
+		return this.blockState.getBaseState().withProperty(FACING, f.getOpposite()).withProperty(CONNECTIONS, 0);
 	}
 
 }

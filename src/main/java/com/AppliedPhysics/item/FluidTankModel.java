@@ -22,6 +22,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,18 +46,19 @@ public final class FluidTankModel implements IModel {
 	public static final FluidTankModel MODEL = new FluidTankModel();
 
 	@Nullable
-	private final ResourceLocation emptyLocation = new ResourceLocation(AppliedPhysics.MODID, "item/simple_tank");
+	private final ResourceLocation emptyLocation = new ResourceLocation(AppliedPhysics.MODID, "items/simple_tank");
 	@Nullable
-	private final ResourceLocation filledLocation = new ResourceLocation(AppliedPhysics.MODID, "item/simple_tank");
+	private final ResourceLocation filledLocation = new ResourceLocation(AppliedPhysics.MODID, "items/simple_tank");
 	@Nullable
 	private final Fluid fluid;
+
+	public int height;
 
 	public FluidTankModel() {
 		this(null);
 	}
 
-	public FluidTankModel(Fluid parFluid)
-	{
+	public FluidTankModel(Fluid parFluid) {
 		fluid = parFluid;
 	}
 
@@ -95,9 +97,9 @@ public final class FluidTankModel implements IModel {
 		if (fluid != null)
 		{
 			// DEBUG
-			System.out.println("Getting fluid sprite: " + fluid.getStill());
+			System.out.println("Getting fluid sprite: " + fluid.getFlowing());
 
-			fluidSprite = bakedTextureGetter.apply(fluid.getStill());
+			fluidSprite = bakedTextureGetter.apply(fluid.getFlowing());
 		}
 
 		if (emptyLocation != null) {
@@ -107,8 +109,7 @@ public final class FluidTankModel implements IModel {
 			IBakedModel model = (new ItemLayerModel(ImmutableList.of(emptyLocation))).bake(state, format, bakedTextureGetter);
 			builder.addAll(model.getQuads(null, null, 0));
 		}
-		if (filledLocation != null && fluidSprite != null)
-		{
+		if (filledLocation != null && fluidSprite != null) {
 			// DEBUG
 			System.out.println("Building filled model");
 
@@ -158,6 +159,9 @@ public final class FluidTankModel implements IModel {
 		return new FluidTankModel(fluid);
 	}
 
+
+
+
 	public enum CustomModelLoader implements ICustomModelLoader
 	{
 		INSTANCE;
@@ -199,6 +203,16 @@ public final class FluidTankModel implements IModel {
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
 	private static final class BakedOverrideHandler extends ItemOverrideList
 	{
 		public static final BakedOverrideHandler INSTANCE = new BakedOverrideHandler();
@@ -212,52 +226,49 @@ public final class FluidTankModel implements IModel {
 		}
 
 		@Override
-		public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
-		{
+		public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
 			FluidStack fluidStack = null;
-			if (stack.hasTagCompound() && stack.getTagCompound().hasKey(FluidHandlerItemStack.FLUID_NBT_KEY))
-			{
+			if(stack.hasTagCompound() && stack.getTagCompound().hasKey(FluidHandlerItemStack.FLUID_NBT_KEY)) {
 				fluidStack = FluidStack.loadFluidStackFromNBT(stack.getTagCompound().getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
 			}
 
-			if (fluidStack == null || fluidStack.amount <= 0)
-			{
-				// // DEBUG
-				// System.out.println("fluid stack is null, returning original model");
-
-				// empty bucket
+			if (fluidStack == null || fluidStack.amount <= 0) {
 				return originalModel;
 			}
 
-			// // DEBUG
-			// System.out.println("Fluid stack was not null and fluid amount = "+fluidStack.amount);
-
 			Baked model = (Baked) originalModel;
-
 			Fluid fluid = fluidStack.getFluid();
 			String name = fluid.getName();
 
-			if (!model.cache.containsKey(name))
-			{
+			if (!model.cache.containsKey(name)) {
 				// DEBUG
-				System.out.println("The model cache does not have key for fluid name");
-				IModel parent = model.parent.process(ImmutableMap.of("fluid", name));
+				System.out.println("The model cache does not have key for fluid " + fluid.getName());
+				FluidTankModel parent = model.parent.process(ImmutableMap.of("fluid", name));
 				Function<ResourceLocation, TextureAtlasSprite> textureGetter;
 				textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
 					@Override
-					public TextureAtlasSprite apply(ResourceLocation location)
-					{
+					public TextureAtlasSprite apply(ResourceLocation location) {
 						return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 					}
 				};
-				IBakedModel bakedModel = parent.bake(new SimpleModelState(model.transforms), model.format,
-						textureGetter);
+				parent.height = (int) ((double) fluidStack.amount / (double) stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).getTankProperties()[0].getCapacity() * 16.0);
+				IBakedModel bakedModel = parent.bake(new SimpleModelState(model.transforms), model.format, textureGetter);
 				model.cache.put(name, bakedModel);
 				return bakedModel;
 			}
 			return model.cache.get(name);
 		}
 	}
+
+
+
+
+
+
+
+
+
+
 
 	// the filled bucket is based on the empty bucket
 	private static final class Baked implements IBakedModel {

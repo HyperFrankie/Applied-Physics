@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "applied_physics:block/tank_side_inside",
-		"2": "applied_physics:block/tank_outside_rot",
-		"3": "applied_physics:block/tank_inside_bottom",
-		"4": "applied_physics:block/tank_inside_side_left",
-		"5": "applied_physics:block/tank_inside_side_right",
-		"6": "applied_physics:block/tank_inside_top",
-		"7": "applied_physics:block/tank_side_outside",
-		"particle": "applied_physics:block/tank_outside_rot"
+		"0": "applied_physics:blocks/tank_side_inside",
+		"2": "applied_physics:blocks/tank_outside_rot",
+		"3": "applied_physics:blocks/tank_inside_bottom",
+		"4": "applied_physics:blocks/tank_inside_side_left",
+		"5": "applied_physics:blocks/tank_inside_side_right",
+		"6": "applied_physics:blocks/tank_inside_top",
+		"7": "applied_physics:blocks/tank_side_outside",
+		"particle": "applied_physics:blocks/tank_outside_rot"
 	},
 	"elements": [
 		{

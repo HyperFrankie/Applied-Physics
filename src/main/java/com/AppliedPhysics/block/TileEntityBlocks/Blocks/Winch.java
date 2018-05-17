@@ -44,8 +44,8 @@ public class Winch extends BlockTileEntity<TileEntityWinch> {
 
 	public static final PropertyEnum<EnumNumber> TOTAL_ROPE_LENGTH = PropertyEnum.create("total_rope_length", EnumNumber.class);
 
-	public Winch() {
-		super(Material.PISTON, "winch");
+	public Winch(Material material, String name) {
+		super(material, name);
 		System.out.println(this.blockState);
 		this.setDefaultState(this.blockState.getBaseState()
 				.withProperty(FACING, EnumFacing.UP)
@@ -121,6 +121,11 @@ public class Winch extends BlockTileEntity<TileEntityWinch> {
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
+
+//	@Override
+//	public BlockRenderLayer getBlockLayer() {
+//		return BlockRenderLayer.TRANSLUCENT;
+//	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {

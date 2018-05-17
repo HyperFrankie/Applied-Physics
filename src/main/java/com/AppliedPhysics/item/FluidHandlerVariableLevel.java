@@ -72,7 +72,9 @@ public class FluidHandlerVariableLevel extends FluidHandlerItemStackSimple {
 				FluidStack filled = resource.copy();
 				int newAmount = fillAmount;
 				if(contained != null) { newAmount += contained.amount; }
+				System.out.println(newAmount);
 				filled.amount = newAmount;
+				System.out.println(filled.getFluid());
 				setFluid(filled);
 			}
 			return fillAmount;
